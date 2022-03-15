@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:stock_picking_mobile/pages/home.dart';
+import 'package:stock_picking_mobile/utils/index.dart';
 
 class StockList extends StatelessWidget {
-  const StockList({Key? key, required this.items}) : super(key: key);
+  const StockList({Key? key, required this.items, this.search = ""})
+      : super(key: key);
 
   final List<StockListItem> items;
+  final String search;
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(columns: _createColumns(), rows: _createRows(items));
+    return DataTable(
+        columns: _createColumns(), rows: _createRows(items, search));
   }
 }
 
 List<DataColumn> _createColumns() {
   const List<String> columns = [
+    "Ranking",
     "Papel",
     "Nome Empresa",
     "Setor",
     "Subsetor",
-    "Magic Ranking",
     "EV/EBIT Ranking",
     "ROIC Ranking",
     "Cotação",
@@ -48,14 +52,17 @@ List<DataColumn> _createColumns() {
   return columns.map((column) => DataColumn(label: Text(column))).toList();
 }
 
-List<DataRow> _createRows(List<StockListItem> data) {
+List<DataRow> _createRows(List<StockListItem> data, String search) {
   return data
+      .where((elem) =>
+          stringMatches(elem.papel, search) ||
+          stringMatches(elem.empresa, search))
       .map((item) => DataRow(cells: [
+            DataCell(Text(item.magicRanking.toString())),
             DataCell(Text(item.papel.toString())),
             DataCell(Text(item.empresa.toString())),
             DataCell(Text(item.setor.toString())),
             DataCell(Text(item.subsetor.toString())),
-            DataCell(Text(item.magicRanking.toString())),
             DataCell(Text(item.evByEbitRanking.toString())),
             DataCell(Text(item.roicRanking.toString())),
             DataCell(Text(item.cotacao.toString())),

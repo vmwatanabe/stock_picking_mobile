@@ -136,21 +136,96 @@ List<StockListItem> parseData(String responseBody) {
       .toList();
 }
 
-class TutorialHome extends StatelessWidget {
-  const TutorialHome({Key? key}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final TextEditingController _searchQueryController = TextEditingController();
+  bool _isSearching = false;
+  String searchQuery = "";
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchQueryController,
+      autofocus: true,
+      decoration: const InputDecoration(
+        hintText: "Search Data...",
+        border: InputBorder.none,
+        hintStyle: TextStyle(color: Colors.white30),
+      ),
+      style: TextStyle(color: Colors.white, fontSize: 16.0),
+      onChanged: (query) => updateSearchQuery(query),
+    );
+  }
+
+  List<Widget> _buildActions() {
+    if (_isSearching) {
+      return <Widget>[
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            if (_searchQueryController == null ||
+                _searchQueryController.text.isEmpty) {
+              Navigator.pop(context);
+              return;
+            }
+            _clearSearchQuery();
+          },
+        ),
+      ];
+    }
+
+    return <Widget>[
+      IconButton(
+        icon: const Icon(Icons.search),
+        onPressed: _startSearch,
+      ),
+    ];
+  }
+
+  void _startSearch() {
+    ModalRoute.of(context)
+        ?.addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
+
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void updateSearchQuery(String newQuery) {
+    setState(() {
+      searchQuery = newQuery;
+    });
+  }
+
+  void _stopSearching() {
+    _clearSearchQuery();
+
+    setState(() {
+      _isSearching = false;
+    });
+  }
+
+  void _clearSearchQuery() {
+    setState(() {
+      _searchQueryController.clear();
+      updateSearchQuery("");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Magic Stock Picking'),
-        actions: const [
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: null,
-          ),
-        ],
+        leading: _isSearching ? const BackButton() : Container(),
+        title: _isSearching
+            ? _buildSearchField()
+            : const Text("Magic Stock Picking"),
+        actions: _buildActions(),
       ),
       body: FutureBuilder<List<StockListItem>>(
         future: fetchStockListData(http.Client()),
@@ -164,7 +239,8 @@ class TutorialHome extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    child: StockList(items: snapshot.data!)));
+                    child:
+                        StockList(items: snapshot.data!, search: searchQuery)));
           } else {
             return const Center(
               child: CircularProgressIndicator(),

@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:stock_picking_mobile/pages/home.dart';
 
 class StockList extends StatelessWidget {
-  const StockList({Key? key}) : super(key: key);
+  const StockList({Key? key, required this.items}) : super(key: key);
 
-  static List<String> columns = [
+  final List<StockListItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return DataTable(columns: _createColumns(), rows: _createRows(items));
+  }
+}
+
+List<DataColumn> _createColumns() {
+  const List<String> columns = [
     "Papel",
     "Nome Empresa",
     "Setor",
@@ -35,132 +45,41 @@ class StockList extends StatelessWidget {
     "Smallcap",
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Text("Papel"),
-        ),
-        DataColumn(
-          label: Text("Nome Empresa"),
-        ),
-        DataColumn(
-          label: Text("Setor"),
-        ),
-        DataColumn(
-          label: Text("Subsetor"),
-        ),
-        DataColumn(
-          label: Text("Magic Ranking"),
-        ),
-        DataColumn(
-          label: Text("EV/EBIT Ranking"),
-        ),
-        DataColumn(
-          label: Text("ROIC Ranking"),
-        ),
-        DataColumn(
-          label: Text("Cotação"),
-        ),
-        DataColumn(
-          label: Text("Cotação para top 30"),
-        ),
-        DataColumn(
-          label: Text("P/L"),
-        ),
-        DataColumn(
-          label: Text("P/VP"),
-        ),
-        DataColumn(
-          label: Text("PSR"),
-        ),
-        DataColumn(
-          label: Text("Div.Yield"),
-        ),
-        DataColumn(
-          label: Text("P/Ativo"),
-        ),
-        DataColumn(
-          label: Text("P/Cap.Giro"),
-        ),
-        DataColumn(
-          label: Text("P/EBIT"),
-        ),
-        DataColumn(
-          label: Text("P/Ativ Circ.Liq"),
-        ),
-        DataColumn(
-          label: Text("EV/EBIT"),
-        ),
-        DataColumn(
-          label: Text("EV/EBITDA"),
-        ),
-        DataColumn(
-          label: Text("Mrg Ebit"),
-        ),
-        DataColumn(
-          label: Text("Mrg. Líq."),
-        ),
-        DataColumn(
-          label: Text("Liq. Corr."),
-        ),
-        DataColumn(
-          label: Text("ROIC"),
-        ),
-        DataColumn(
-          label: Text("ROE"),
-        ),
-        DataColumn(
-          label: Text("Liq.2meses"),
-        ),
-        DataColumn(
-          label: Text("Patrim. Líq"),
-        ),
-        DataColumn(
-          label: Text("Dív.Brut/ Patrim."),
-        ),
-        DataColumn(
-          label: Text("Cresc. Rec.5a"),
-        ),
-        DataColumn(
-          label: Text("Smallcap"),
-        ),
-      ],
-      rows: const <DataRow>[
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Sarah')),
-            DataCell(Text('19')),
-            DataCell(Text('Student')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Janine')),
-            DataCell(Text('43')),
-            DataCell(Text('Professor')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('William')),
-            DataCell(Text('27')),
-            DataCell(Text('Associate Professor')),
-          ],
-        ),
-      ],
-    );
-  }
+  return columns.map((column) => DataColumn(label: Text(column))).toList();
 }
 
-// List<DataRow> _createRows() {
-//     return _books
-//         .map((book) => DataRow(cells: [
-//               DataCell(Text('#' + book['id'].toString())),
-//               DataCell(Text(book['title'])),
-//               DataCell(Text(book['author']))
-//             ]))
-//         .toList();
-//   }
-// }
+List<DataRow> _createRows(List<StockListItem> data) {
+  return data
+      .map((item) => DataRow(cells: [
+            DataCell(Text(item.papel.toString())),
+            DataCell(Text(item.empresa.toString())),
+            DataCell(Text(item.setor.toString())),
+            DataCell(Text(item.subsetor.toString())),
+            DataCell(Text(item.magicRanking.toString())),
+            DataCell(Text(item.evByEbitRanking.toString())),
+            DataCell(Text(item.roicRanking.toString())),
+            DataCell(Text(item.cotacao.toString())),
+            DataCell(Text(item.cotacaoToTop30.toString())),
+            DataCell(Text(item.pByL.toString())),
+            DataCell(Text(item.pByVp.toString())),
+            DataCell(Text(item.psr.toString())),
+            DataCell(Text(item.dividendYield.toString())),
+            DataCell(Text(item.pByAtivo.toString())),
+            DataCell(Text(item.pByCapitalGiro.toString())),
+            DataCell(Text(item.pByEbit.toString())),
+            DataCell(Text(item.pByAtivoCircLiq.toString())),
+            DataCell(Text(item.evByEbit.toString())),
+            DataCell(Text(item.evByEbitda.toString())),
+            DataCell(Text(item.margemEbit.toString())),
+            DataCell(Text(item.margemLiq.toString())),
+            DataCell(Text(item.liqCorr.toString())),
+            DataCell(Text(item.roic.toString())),
+            DataCell(Text(item.roe.toString())),
+            DataCell(Text(item.liqDoisMeses.toString())),
+            DataCell(Text(item.patrimonioLiquido.toString())),
+            DataCell(Text(item.dividaBrutaByPatrimonio.toString())),
+            DataCell(Text(item.crescRec.toString())),
+            DataCell(Text(item.smallcap.toString())),
+          ]))
+      .toList();
+}

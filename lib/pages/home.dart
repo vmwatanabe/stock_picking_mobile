@@ -7,6 +7,13 @@ import 'dart:convert';
 import 'package:stock_picking_mobile/components/stock_list/stock_list.dart';
 import 'package:stock_picking_mobile/pages/stock_compare.dart';
 
+class PayloadData {
+  const PayloadData({Key? key, required this.date, required this.items});
+
+  final DateTime date;
+  final List<StockListItem> items;
+}
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -20,14 +27,14 @@ class _HomeState extends State<Home> {
   String searchQuery = "";
 
   Map selectedRows = {};
-  List<StockListItem> pageData = [];
+  PayloadData? pageData;
 
-  Future<List<StockListItem>> fetchStockListData(http.Client client) async {
+  Future<PayloadData> fetchStockListData(http.Client client) async {
     final response = await client.get(
         Uri.parse('https://hardcore-hugle-720c0f.netlify.app/latest.json'));
 
     if (response.statusCode == 200) {
-      List<StockListItem> data = parseData(response.body);
+      PayloadData data = parseData(response.body);
 
       setState(() {
         pageData = data;
@@ -39,12 +46,16 @@ class _HomeState extends State<Home> {
     throw Exception('Failed to load data');
   }
 
-  List<StockListItem> parseData(String responseBody) {
-    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  PayloadData parseData(String responseBody) {
+    final parsed = jsonDecode(responseBody);
 
-    return parsed
-        .map<StockListItem>((json) => StockListItem.fromJson(json))
-        .toList();
+    DateTime date = DateTime.parse(parsed["dtCreated"]);
+
+    return PayloadData(
+        date: date,
+        items: parsed["items"]
+            .map<StockListItem>((json) => StockListItem.fromJson(json))
+            .toList());
   }
 
   Widget _buildSearchField() {
@@ -116,12 +127,14 @@ class _HomeState extends State<Home> {
   }
 
   void _navigateToStockComparePage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              StockCompare(items: pageData, selected: selectedRows)),
-    );
+    if (pageData?.items != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                StockCompare(items: pageData!.items, selected: selectedRows)),
+      );
+    }
   }
 
   FloatingActionButton? _getFloatingActionButton() {
@@ -154,7 +167,7 @@ class _HomeState extends State<Home> {
             : const Text("Magic Stock Picking"),
         actions: _buildActions(),
       ),
-      body: FutureBuilder<List<StockListItem>>(
+      body: FutureBuilder<PayloadData>(
         future: fetchStockListData(http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -167,7 +180,7 @@ class _HomeState extends State<Home> {
                 child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: StockList(
-                        items: snapshot.data!,
+                        items: snapshot.data!.items,
                         onSelectionChange: _onSelectionChanged,
                         search: searchQuery)));
           } else {

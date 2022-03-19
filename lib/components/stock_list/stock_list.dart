@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stock_picking_mobile/classes/index.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class StockList extends StatefulWidget {
   const StockList(
@@ -20,16 +21,47 @@ class StockList extends StatefulWidget {
 
 class _StockListState extends State<StockList> {
   Map selected = {};
+  final pageSize = 30;
+  int pages = 1;
+  bool canLoadMore = false;
+
+  void _showMoreItems(visibilityInfo) {
+    if (visibilityInfo.visibleFraction == 1 && !canLoadMore) {
+      setState(() {
+        pages = pages + 1;
+        canLoadMore = true;
+      });
+    } else {
+      setState(() {
+        canLoadMore = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-        columns: _createColumns(),
-        rows: _createRows(widget.items, widget.search));
+    return Column(
+      children: [
+        SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+                columns: _createColumns(),
+                rows: _createRows(widget.items, widget.search))),
+        VisibilityDetector(
+            key: const Key('loading'),
+            onVisibilityChanged: _showMoreItems,
+            child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ))),
+      ],
+    );
   }
 
   List<DataRow> _createRows(List<StockListItem> data, String search) {
     return data
+        .sublist(0, pages * pageSize)
         .where((elem) =>
             stringMatches(elem.papel, search) ||
             stringMatches(elem.empresa, search))
@@ -45,25 +77,9 @@ class _StockListState extends State<StockList> {
                 DataCell(Text(item.cotacao.toString())),
                 DataCell(Text(item.cotacaoToTop30.toString())),
                 DataCell(Text(item.pByL.toString())),
-                DataCell(Text(item.pByVp.toString())),
-                DataCell(Text(item.psr.toString())),
                 DataCell(Text(item.dividendYield.toString())),
-                DataCell(Text(item.pByAtivo.toString())),
-                DataCell(Text(item.pByCapitalGiro.toString())),
-                DataCell(Text(item.pByEbit.toString())),
-                DataCell(Text(item.pByAtivoCircLiq.toString())),
-                DataCell(Text(item.evByEbit.toString())),
-                DataCell(Text(item.evByEbitda.toString())),
-                DataCell(Text(item.margemEbit.toString())),
-                DataCell(Text(item.margemLiq.toString())),
-                DataCell(Text(item.liqCorr.toString())),
                 DataCell(Text(item.roic.toString())),
                 DataCell(Text(item.roe.toString())),
-                DataCell(Text(item.liqDoisMeses.toString())),
-                DataCell(Text(item.patrimonioLiquido.toString())),
-                DataCell(Text(item.dividaBrutaByPatrimonio.toString())),
-                DataCell(Text(item.crescRec.toString())),
-                DataCell(Text(item.smallcap.toString())),
               ],
               selected: selected.containsKey(item.papel)
                   ? selected[item.papel]
@@ -81,40 +97,24 @@ class _StockListState extends State<StockList> {
             ))
         .toList();
   }
-}
 
-List<DataColumn> _createColumns() {
-  const List<String> columns = [
-    "Ranking",
-    "Papel",
-    "Nome Empresa",
-    "Setor",
-    "Subsetor",
-    "EV/EBIT Ranking",
-    "ROIC Ranking",
-    "Cotação",
-    "Cotação para top 30",
-    "P/L",
-    "P/VP",
-    "PSR",
-    "Div.Yield",
-    "P/Ativo",
-    "P/Cap.Giro",
-    "P/EBIT",
-    "P/Ativ Circ.Liq",
-    "EV/EBIT",
-    "EV/EBITDA",
-    "Mrg Ebit",
-    "Mrg. Líq.",
-    "Liq. Corr.",
-    "ROIC",
-    "ROE",
-    "Liq.2meses",
-    "Patrim. Líq",
-    "Dív.Brut/ Patrim.",
-    "Cresc. Rec.5a",
-    "Smallcap",
-  ];
+  List<DataColumn> _createColumns() {
+    const List<String> columns = [
+      "Ranking",
+      "Papel",
+      "Nome Empresa",
+      "Setor",
+      "Subsetor",
+      "EV/EBIT Ranking",
+      "ROIC Ranking",
+      "Cotação",
+      "Cotação para top 30",
+      "P/L",
+      "Div.Yield",
+      "ROIC",
+      "ROE",
+    ];
 
-  return columns.map((column) => DataColumn(label: Text(column))).toList();
+    return columns.map((column) => DataColumn(label: Text(column))).toList();
+  }
 }

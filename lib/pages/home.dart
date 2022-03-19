@@ -176,13 +176,11 @@ class _HomeState extends State<Home> {
             );
           } else if (snapshot.hasData) {
             return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: StockList(
-                        items: snapshot.data!.items,
-                        onSelectionChange: _onSelectionChanged,
-                        search: searchQuery)));
+                scrollDirection: Axis.vertical,
+                child: StockList(
+                    items: snapshot.data!.items,
+                    onSelectionChange: _onSelectionChanged,
+                    search: searchQuery));
           } else {
             return const Center(
               child: CircularProgressIndicator(),

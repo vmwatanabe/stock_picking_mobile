@@ -100,7 +100,7 @@ class _StockListState extends State<StockList> {
 
   List<DataColumn> _createColumns() {
     const List<String> columns = [
-      "Ranking",
+      "#",
       "Papel",
       "Nome Empresa",
       "Setor",

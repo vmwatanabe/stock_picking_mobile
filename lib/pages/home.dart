@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:stock_picking_mobile/classes/index.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -22,6 +23,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   final TextEditingController _searchQueryController = TextEditingController();
   bool _isSearching = false;
   String searchQuery = "";
@@ -56,6 +59,19 @@ class _HomeState extends State<Home> {
         items: parsed["items"]
             .map<StockListItem>((json) => StockListItem.fromJson(json))
             .toList());
+  }
+
+  Widget _buildLeadingButton() {
+    if (_isSearching) {
+      return const BackButton();
+    }
+
+    return IconButton(
+      icon: const Icon(Icons.menu),
+      onPressed: () {
+        _key.currentState!.openDrawer();
+      },
+    );
   }
 
   Widget _buildSearchField() {
@@ -157,16 +173,40 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Drawer getDrawer() {
+    ListTile getMagicListTile() {
+      DateTime? date = pageData?.date;
+
+      String text = date == null
+          ? 'Falha ao carregar'
+          : 'Última atualização: ' + DateFormat('dd/MM/yyy').format(date);
+
+      return ListTile(
+        leading: const Icon(Icons.auto_fix_high),
+        title: const Text("Magic List"),
+        subtitle: Text(text),
+      );
+    }
+
+    return Drawer(
+      child: ListView(
+        children: [getMagicListTile()],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       appBar: AppBar(
-        leading: _isSearching ? const BackButton() : Container(),
+        leading: _buildLeadingButton(),
         title: _isSearching
             ? _buildSearchField()
             : const Text("Magic Stock Picking"),
         actions: _buildActions(),
       ),
+      drawer: getDrawer(),
       body: FutureBuilder<PayloadData>(
         future: fetchStockListData(http.Client()),
         builder: (context, snapshot) {

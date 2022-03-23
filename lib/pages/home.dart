@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:stock_picking_mobile/classes/index.dart';
+import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 import 'package:stock_picking_mobile/classes/scaffold.dart';
 import 'dart:async';
 import 'dart:convert';

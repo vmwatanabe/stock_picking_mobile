@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stock_picking_mobile/classes/scaffold.dart';
+import 'package:stock_picking_mobile/classes/wallet_item.dart';
+import 'package:stock_picking_mobile/components/add_wallet/add_wallet.dart';
+import 'package:stock_picking_mobile/components/wallet-item-card/wallet-item-card.dart';
+import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
 
 class Wallet extends StatefulWidget {
   const Wallet({Key? key}) : super(key: key);
@@ -11,11 +15,22 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   bool _isAdding = false;
 
-  Widget _buildLeadingButton(BuildContext context) {
-    if (_isAdding) {
-      return const BackButton();
-    }
+  List<WalletItem> _list = [];
+  late WalletDatabaseHandler handler;
 
+  @override
+  void initState() {
+    super.initState();
+    handler = WalletDatabaseHandler();
+    handler.initializeDB().whenComplete(() async {
+      List<WalletItem> list = await handler.retrieveWalletItems();
+      setState(() {
+        _list = list;
+      });
+    });
+  }
+
+  Widget _buildLeadingButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.menu),
       onPressed: () {
@@ -24,11 +39,26 @@ class _WalletState extends State<Wallet> {
     );
   }
 
+  void handleSubmit(WalletItem item) {
+    print(item);
+    handler.insertWalletItems([item]);
+  }
+
   FloatingActionButton? _getFloatingActionButton() {
     return FloatingActionButton(
       tooltip: 'Adicionar',
       child: const Icon(Icons.add),
-      onPressed: () {},
+      onPressed: () {
+        setState(() {
+          _isAdding = true;
+        });
+
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AddWallet(
+                  onSubmit: handleSubmit,
+                ));
+      },
     );
   }
 
@@ -39,7 +69,12 @@ class _WalletState extends State<Wallet> {
         leading: _buildLeadingButton(context),
         title: const Text("Wallet"),
       ),
-      body: Container(),
+      body: ListView(
+          children: _list
+              .map((e) => WalletItemCard(
+                    data: e,
+                  ))
+              .toList()),
       floatingActionButton: _getFloatingActionButton(),
     );
   }

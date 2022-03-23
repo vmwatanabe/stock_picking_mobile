@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stock_picking_mobile/classes/index.dart';
+import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 

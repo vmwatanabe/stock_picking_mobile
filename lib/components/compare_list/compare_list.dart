@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stock_picking_mobile/classes/index.dart';
+import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 
 class CompareList extends StatefulWidget {
   const CompareList({Key? key, required this.items}) : super(key: key);

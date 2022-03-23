@@ -106,7 +106,8 @@ class AddWalletFormState extends State<AddWalletForm> {
             keyboardType: TextInputType.number,
             onSaved: (String? value) {
               if (value != null) {
-                formData['buyDate'] = getDateFromValue(value);
+                formData['buyDate'] =
+                    getDateFromValue(value)?.toIso8601String();
               }
             },
             decoration: const InputDecoration(

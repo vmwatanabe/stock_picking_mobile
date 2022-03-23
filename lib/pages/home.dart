@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:stock_picking_mobile/classes/magic_payload.dart';
 import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 import 'package:stock_picking_mobile/classes/scaffold.dart';
 import 'dart:async';
@@ -7,13 +9,7 @@ import 'dart:convert';
 
 import 'package:stock_picking_mobile/components/stock_list/stock_list.dart';
 import 'package:stock_picking_mobile/pages/stock_compare.dart';
-
-class PayloadData {
-  const PayloadData({Key? key, required this.date, required this.items});
-
-  final DateTime date;
-  final List<StockListItem> items;
-}
+import 'package:stock_picking_mobile/providers/magic_model.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -30,12 +26,17 @@ class _HomeState extends State<Home> {
   Map selectedRows = {};
   PayloadData? pageData;
 
-  Future<PayloadData> fetchStockListData(http.Client client) async {
+  Future<PayloadData> fetchStockListData(
+      BuildContext context, http.Client client) async {
     final response = await client.get(
         Uri.parse('https://hardcore-hugle-720c0f.netlify.app/latest.json'));
 
     if (response.statusCode == 200) {
       PayloadData data = parseData(response.body);
+      try {
+        var magic = context.read<MagicModel>();
+        magic.setData(data);
+      } catch (e) {}
 
       if (mounted) {
         setState(() {
@@ -184,7 +185,7 @@ class _HomeState extends State<Home> {
         actions: _buildActions(),
       ),
       body: FutureBuilder<PayloadData>(
-        future: fetchStockListData(http.Client()),
+        future: fetchStockListData(context, http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(

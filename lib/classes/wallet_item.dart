@@ -10,14 +10,14 @@ class WalletItem {
   final int quantity;
   final String name;
   final double price;
-  final DateTime buyDate;
+  final String buyDate;
 
   WalletItem.fromMap(Map<String, dynamic> res)
       : id = res["id"],
         name = res["name"],
         quantity = res["quantity"],
         price = res["price"],
-        buyDate = DateTime.parse(res["buyDate"]);
+        buyDate = res["buyDate"];
 
   Map<String, dynamic> toMap() {
     return {
@@ -25,7 +25,7 @@ class WalletItem {
       'price': price,
       'quantity': quantity,
       'name': name,
-      'buyDate': buyDate.toIso8601String(),
+      'buyDate': buyDate,
     };
   }
 }

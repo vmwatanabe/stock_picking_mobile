@@ -37,7 +37,7 @@ class WalletDatabaseHandler {
     return result;
   }
 
-  Future<void> deleteWalletItems(int id) async {
+  Future<void> deleteWalletItem(int id) async {
     final db = await initializeDB();
     await db.delete(
       _tableName,

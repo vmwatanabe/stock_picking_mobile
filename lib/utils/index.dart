@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 bool stringMatches(String value, String match) {
   return value.toUpperCase().contains(match.toUpperCase());
 }
@@ -33,4 +35,20 @@ DateTime? getDateFromValue(String? value) {
   DateTime? thisDate = DateTime.tryParse(splited[2] + splited[1] + splited[0]);
 
   return thisDate;
+}
+
+String? getFormattedDate(String? value) {
+  if (value == null) return null;
+
+  DateTime? thisDate = DateTime.tryParse(value);
+
+  if (thisDate == null) return null;
+
+  return DateFormat("dd/MM/yyyy").format(thisDate);
+}
+
+String getFormattedPrice(double value) {
+  NumberFormat formatCurrency = NumberFormat.simpleCurrency(locale: 'pt_BR');
+
+  return formatCurrency.format(value);
 }

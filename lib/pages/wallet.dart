@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stock_picking_mobile/classes/scaffold.dart';
+import 'package:stock_picking_mobile/classes/stock_list_item.dart';
+import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/classes/wallet_item.dart';
 import 'package:stock_picking_mobile/components/add_wallet/add_wallet.dart';
 import 'package:stock_picking_mobile/components/wallet_item_card/wallet_item_card.dart';
@@ -15,7 +17,7 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
-  List<WalletItem> _list = [];
+  List<WalletCardInfo> _list = [];
   late WalletDatabaseHandler handler;
 
   @override
@@ -27,8 +29,25 @@ class _WalletState extends State<Wallet> {
 
   void retrieveWalletItems() async {
     List<WalletItem> list = await handler.retrieveWalletItems();
+    MagicModel magic = context.read<MagicModel>();
+
+    List<StockListItem>? stockListItems = magic.data?.items;
+
+    List<WalletCardInfo> newList = list.map((elem) {
+      StockListItem? magicPair =
+          stockListItems?.firstWhere((element) => element.papel == elem.name);
+
+      return WalletCardInfo(
+          stockListItem: magicPair,
+          buyDate: elem.buyDate,
+          id: elem.id,
+          name: elem.name,
+          price: elem.price,
+          quantity: elem.quantity);
+    }).toList();
+
     setState(() {
-      _list = list;
+      _list = newList;
     });
   }
 
@@ -81,7 +100,6 @@ class _WalletState extends State<Wallet> {
                     return WalletItemCard(
                         key: Key(_list[index].id!.toString()),
                         data: _list[index],
-                        magic: magic.data,
                         onDelete: retrieveWalletItems);
                   }),
               floatingActionButton: _getFloatingActionButton(),

@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:stock_picking_mobile/classes/magic_payload.dart';
-import 'package:stock_picking_mobile/classes/stock_list_item.dart';
-import 'package:stock_picking_mobile/classes/wallet_item.dart';
+import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
 
 class WalletItemCard extends StatefulWidget {
-  const WalletItemCard(
-      {Key? key, required this.data, this.magic, required this.onDelete})
+  const WalletItemCard({Key? key, required this.data, required this.onDelete})
       : super(key: key);
 
-  final WalletItem data;
-  final PayloadData? magic;
+  final WalletCardInfo data;
   final Function onDelete;
 
   @override
@@ -22,26 +18,13 @@ class WalletItemCard extends StatefulWidget {
 }
 
 class _WalletItemCardState extends State<WalletItemCard> {
-  StockListItem? magicPair;
   late WalletDatabaseHandler handler;
-  double initialTotal = 0;
-  double currentTotal = 0;
-  double pnl = 0;
 
   @override
   void initState() {
     super.initState();
     handler = WalletDatabaseHandler();
     handler.initializeDB();
-
-    try {
-      magicPair = widget.magic?.items
-          .firstWhere((element) => element.papel == widget.data.name);
-
-      initialTotal = widget.data.price * widget.data.quantity;
-      currentTotal = widget.data.quantity * (magicPair?.cotacao ?? 0);
-      pnl = currentTotal - initialTotal;
-    } catch (e) {}
   }
 
   void handleDeletePress(BuildContext context) async {
@@ -88,7 +71,7 @@ class _WalletItemCardState extends State<WalletItemCard> {
                         Text(widget.data.name,
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text(magicPair?.empresa ?? '')
+                        Text(widget.data.empresa ?? '')
                       ],
                     )
                   ],
@@ -123,21 +106,23 @@ class _WalletItemCardState extends State<WalletItemCard> {
                       Expanded(
                           child: DescriptionItem(
                         label: "Invested",
-                        child: getFormattedPrice(initialTotal),
+                        child: getFormattedPrice(widget.data.initialTotal),
                       )),
                       Expanded(
                           child: DescriptionItem(
                         label: "Today",
-                        child: getFormattedPrice(currentTotal),
+                        child: getFormattedPrice(widget.data.currentTotal),
                       )),
                       Expanded(
                           child: DescriptionItem(
                               label: "P/L",
-                              child: getFormattedPrice(pnl),
+                              child: getFormattedPrice(widget.data.pnl),
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: pnl > 0 ? Colors.green : Colors.red))),
+                                  color: widget.data.pnl > 0
+                                      ? Colors.green
+                                      : Colors.red))),
                     ],
                   ),
                 )

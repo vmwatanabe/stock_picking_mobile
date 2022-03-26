@@ -33,6 +33,10 @@ class WalletCardInfo extends WalletItem {
     return stockListItem?.setor;
   }
 
+  int? get magicRanking {
+    return stockListItem?.magicRanking;
+  }
+
   @override
   Map<String, dynamic> toMap() {
     return {

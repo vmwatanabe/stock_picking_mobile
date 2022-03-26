@@ -68,7 +68,7 @@ class _WalletItemCardState extends State<WalletItemCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.data.name,
+                        Text(widget.data.name + ' #${widget.data.magicRanking}',
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                         Text(widget.data.empresa ?? '')

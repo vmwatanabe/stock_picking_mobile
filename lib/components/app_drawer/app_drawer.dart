@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:stock_picking_mobile/classes/scaffold.dart';
+import 'package:provider/provider.dart';
+import 'package:stock_picking_mobile/providers/magic_model.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key, required this.navigator}) : super(key: key);
@@ -18,6 +21,18 @@ class AppDrawer extends StatelessWidget {
     state?.close();
   }
 
+  Widget? _getMagicSubTitle(BuildContext context) {
+    MagicModel magic = context.read<MagicModel>();
+
+    DateTime? date = magic.data?.date;
+
+    if (date != null) {
+      return Text('Updated: ' + DateFormat("dd/MM/yyyy").format(date));
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -26,6 +41,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.auto_fix_high),
             title: const Text("Magic List"),
+            subtitle: _getMagicSubTitle(context),
             onTap: () => _navigateToMagicList(context),
           ),
           ListTile(

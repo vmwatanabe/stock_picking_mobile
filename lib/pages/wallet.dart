@@ -187,7 +187,7 @@ class _WalletState extends State<Wallet> {
               ListView.separated(
                   itemCount: _list.length,
                   shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(16),
                   separatorBuilder: (BuildContext context, int index) =>
                       const Padding(

@@ -29,6 +29,10 @@ class WalletCardInfo extends WalletItem {
     return currentTotal - initialTotal;
   }
 
+  String? get sector {
+    return stockListItem?.setor;
+  }
+
   @override
   Map<String, dynamic> toMap() {
     return {

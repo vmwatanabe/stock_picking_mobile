@@ -5,6 +5,7 @@ import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/classes/wallet_item.dart';
 import 'package:stock_picking_mobile/components/add_wallet/add_wallet.dart';
+import 'package:stock_picking_mobile/components/wallet_composition/wallet_composition.dart';
 import 'package:stock_picking_mobile/components/wallet_item_card/wallet_item_card.dart';
 import 'package:stock_picking_mobile/providers/magic_model.dart';
 import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
@@ -172,29 +173,33 @@ class _WalletState extends State<Wallet> {
         leading: _buildLeadingButton(context),
         title: const Text("Wallet"),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [_buildFilter()],
-            ),
-          ),
-          ListView.separated(
-              itemCount: _list.length,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.all(16),
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-              itemBuilder: (context, index) {
-                return WalletItemCard(
-                    key: Key(_list[index].id!.toString()),
-                    data: _list[index],
-                    onDelete: retrieveWalletItems);
-              }),
-        ],
-      ),
+      body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              WalletComposition(list: _list),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [_buildFilter()],
+                ),
+              ),
+              ListView.separated(
+                  itemCount: _list.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  padding: const EdgeInsets.all(16),
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10)),
+                  itemBuilder: (context, index) {
+                    return WalletItemCard(
+                        key: Key(_list[index].id!.toString()),
+                        data: _list[index],
+                        onDelete: retrieveWalletItems);
+                  }),
+            ],
+          )),
       floatingActionButton: _getFloatingActionButton(),
     );
   }

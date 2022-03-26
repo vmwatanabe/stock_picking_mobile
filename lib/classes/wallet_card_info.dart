@@ -28,4 +28,19 @@ class WalletCardInfo extends WalletItem {
   double get pnl {
     return currentTotal - initialTotal;
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'price': price,
+      'quantity': quantity,
+      'name': name,
+      'buyDate': buyDate,
+      'empresa': empresa,
+      'initialTotal': initialTotal,
+      'currentTotal': currentTotal,
+      'pnl': pnl,
+    };
+  }
 }

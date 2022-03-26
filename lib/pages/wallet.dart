@@ -9,6 +9,45 @@ import 'package:stock_picking_mobile/components/wallet_item_card/wallet_item_car
 import 'package:stock_picking_mobile/providers/magic_model.dart';
 import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
 
+enum OrderedBy {
+  ticker,
+  profitabilityAsc,
+  profitabilityDesc,
+}
+
+extension OrderedByExtension on OrderedBy {
+  String get displayTitle {
+    switch (this) {
+      case OrderedBy.ticker:
+        return 'Ticker';
+      case OrderedBy.profitabilityAsc:
+        return 'Profitability (Asc)';
+      case OrderedBy.profitabilityDesc:
+        return 'Profitability (Desc)';
+    }
+  }
+
+  String get propToCompare {
+    switch (this) {
+      case OrderedBy.ticker:
+        return 'name';
+      case OrderedBy.profitabilityAsc:
+        return 'pnl';
+      case OrderedBy.profitabilityDesc:
+        return 'pnl';
+    }
+  }
+
+  bool get sortReversed {
+    switch (this) {
+      case OrderedBy.profitabilityDesc:
+        return true;
+      default:
+        return false;
+    }
+  }
+}
+
 class Wallet extends StatefulWidget {
   const Wallet({Key? key}) : super(key: key);
 
@@ -19,12 +58,26 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   List<WalletCardInfo> _list = [];
   late WalletDatabaseHandler handler;
+  OrderedBy _orderedBy = OrderedBy.ticker;
 
   @override
   void initState() {
     super.initState();
     handler = WalletDatabaseHandler();
     handler.initializeDB().whenComplete(retrieveWalletItems);
+  }
+
+  List<WalletCardInfo> sortList(List<WalletCardInfo> data) {
+    data.sort((a, b) {
+      var first = _orderedBy.sortReversed ? b : a;
+      var second = _orderedBy.sortReversed ? a : b;
+
+      return first
+          .toMap()[_orderedBy.propToCompare]
+          .compareTo(second.toMap()[_orderedBy.propToCompare]);
+    });
+
+    return data;
   }
 
   void retrieveWalletItems() async {
@@ -47,7 +100,7 @@ class _WalletState extends State<Wallet> {
     }).toList();
 
     setState(() {
-      _list = newList;
+      _list = sortList(newList);
     });
   }
 
@@ -82,27 +135,67 @@ class _WalletState extends State<Wallet> {
     );
   }
 
+  Widget _buildFilter() {
+    return Expanded(
+        child: DropdownButtonFormField<OrderedBy>(
+            decoration: const InputDecoration(
+              label: Text(
+                "Order by",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              enabledBorder: InputBorder.none,
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+            ),
+            iconSize: 0.0,
+            value: _orderedBy,
+            onChanged: (OrderedBy? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _orderedBy = newValue;
+                  _list = sortList(_list);
+                });
+              }
+            },
+            items: OrderedBy.values.map((OrderedBy classType) {
+              return DropdownMenuItem<OrderedBy>(
+                  value: classType, child: Text(classType.displayTitle));
+            }).toList()));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<MagicModel>(
-        builder: (context, magic, child) => Scaffold(
-              appBar: AppBar(
-                leading: _buildLeadingButton(context),
-                title: const Text("Wallet"),
-              ),
-              body: ListView.separated(
-                  itemCount: _list.length,
-                  padding: const EdgeInsets.all(16),
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10)),
-                  itemBuilder: (context, index) {
-                    return WalletItemCard(
-                        key: Key(_list[index].id!.toString()),
-                        data: _list[index],
-                        onDelete: retrieveWalletItems);
-                  }),
-              floatingActionButton: _getFloatingActionButton(),
-            ));
+    return Scaffold(
+      appBar: AppBar(
+        leading: _buildLeadingButton(context),
+        title: const Text("Wallet"),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [_buildFilter()],
+            ),
+          ),
+          ListView.separated(
+              itemCount: _list.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(16),
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+              itemBuilder: (context, index) {
+                return WalletItemCard(
+                    key: Key(_list[index].id!.toString()),
+                    data: _list[index],
+                    onDelete: retrieveWalletItems);
+              }),
+        ],
+      ),
+      floatingActionButton: _getFloatingActionButton(),
+    );
   }
 }

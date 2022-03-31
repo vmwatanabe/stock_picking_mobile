@@ -59,7 +59,7 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   List<WalletCardInfo> _list = [];
   late WalletDatabaseHandler handler;
-  OrderedBy _orderedBy = OrderedBy.ticker;
+  OrderedBy _orderedBy = OrderedBy.profitabilityDesc;
 
   @override
   void initState() {

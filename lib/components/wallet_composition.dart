@@ -16,7 +16,8 @@ class _WalletCompositionState extends State<WalletComposition> {
     Map<String, double> sectorCount = {};
 
     for (WalletCardInfo item in widget.list) {
-      sectorCount[item.sector!] = (sectorCount[item.sector] ?? 0) + 1;
+      sectorCount[item.sector!] =
+          (sectorCount[item.sector] ?? 0) + item.currentTotal;
     }
 
     if (sectorCount.isEmpty) {
@@ -33,21 +34,21 @@ class _WalletCompositionState extends State<WalletComposition> {
         legendOptions:
             const LegendOptions(legendPosition: LegendPosition.bottom),
         colorList: const [
-          Colors.red,
+          Colors.indigo,
+          Colors.pink,
+          Colors.deepOrange,
           Colors.teal,
           Colors.purple,
-          Colors.lightBlue,
           Colors.deepPurple,
+          Colors.red,
           Colors.cyan,
           Colors.brown,
-          Colors.indigo,
-          Colors.deepOrange,
           Colors.lightGreen,
           Colors.blue,
-          Colors.pink,
           Colors.green,
           Colors.lime,
           Colors.yellow,
+          Colors.lightBlue,
           Colors.amber,
           Colors.orange,
           Colors.grey,

@@ -66,7 +66,7 @@ class _WalletCompositionState extends State<WalletComposition> {
             padding: EdgeInsets.all(16),
             child: Text(
               "Wallet composition",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             )),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 24, 0, 24),

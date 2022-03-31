@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stock_picking_mobile/components/app_drawer/app_drawer.dart';
+import 'package:stock_picking_mobile/components/app_drawer.dart';
 import 'package:stock_picking_mobile/pages/home.dart';
 import 'package:stock_picking_mobile/pages/wallet.dart';
 import 'package:stock_picking_mobile/providers/magic_model.dart';

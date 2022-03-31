@@ -52,3 +52,15 @@ String getFormattedPrice(double value) {
 
   return formatCurrency.format(value);
 }
+
+String getFormattedDouble(double value) {
+  NumberFormat formatter = NumberFormat.decimalPattern();
+
+  return formatter.format(value);
+}
+
+String getFormattedPercentage(double value) {
+  NumberFormat formatter = NumberFormat.percentPattern();
+
+  return formatter.format(value);
+}

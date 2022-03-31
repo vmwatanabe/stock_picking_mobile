@@ -4,9 +4,9 @@ import 'package:stock_picking_mobile/classes/scaffold.dart';
 import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/classes/wallet_item.dart';
-import 'package:stock_picking_mobile/components/add_wallet/add_wallet.dart';
-import 'package:stock_picking_mobile/components/wallet_composition/wallet_composition.dart';
-import 'package:stock_picking_mobile/components/wallet_item_card/wallet_item_card.dart';
+import 'package:stock_picking_mobile/components/add_wallet.dart';
+import 'package:stock_picking_mobile/components/wallet_composition.dart';
+import 'package:stock_picking_mobile/components/wallet_item_card.dart';
 import 'package:stock_picking_mobile/providers/magic_model.dart';
 import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
 

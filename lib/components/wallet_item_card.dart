@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
+import 'package:stock_picking_mobile/components/description_item.dart';
 import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
 
@@ -128,31 +129,5 @@ class _WalletItemCardState extends State<WalletItemCard> {
                 )
               ],
             )));
-  }
-}
-
-class DescriptionItem extends StatelessWidget {
-  const DescriptionItem(
-      {Key? key, required this.label, required this.child, this.style})
-      : super(key: key);
-
-  final String label;
-  final String child;
-  final TextStyle? style;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
-        ),
-        Text(child,
-            style: style ??
-                const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-      ],
-    );
   }
 }

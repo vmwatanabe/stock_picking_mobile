@@ -7,7 +7,7 @@ import 'package:stock_picking_mobile/classes/scaffold.dart';
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:stock_picking_mobile/components/stock_list/stock_list.dart';
+import 'package:stock_picking_mobile/components/stock_list.dart';
 import 'package:stock_picking_mobile/pages/stock_compare.dart';
 import 'package:stock_picking_mobile/providers/magic_model.dart';
 

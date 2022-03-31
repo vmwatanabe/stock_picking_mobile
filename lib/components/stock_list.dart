@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stock_picking_mobile/classes/stock_list_item.dart';
 import 'package:stock_picking_mobile/components/magic_item_card.dart';
+import 'package:stock_picking_mobile/utils/index.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class StockList extends StatefulWidget {
@@ -37,7 +38,6 @@ class _StockListState extends State<StockList> {
       setState(() {
         pages = pages + 1;
         canLoadMore = true;
-        filteredItems = widget.items.sublist(0, pages * pageSize);
       });
     } else {
       setState(() {
@@ -46,12 +46,37 @@ class _StockListState extends State<StockList> {
     }
   }
 
+  List<StockListItem> getFilteredItems() {
+    if (widget.search.isNotEmpty) {
+      return widget.items
+          .where((element) =>
+              stringMatches(element.papel, widget.search) ||
+              stringMatches(element.empresa, widget.search))
+          .toList();
+    }
+
+    return widget.items.sublist(0, pages * pageSize);
+  }
+
+  Widget _getLoading() {
+    if (widget.search.isNotEmpty) return Container();
+
+    return VisibilityDetector(
+        key: const Key('loading'),
+        onVisibilityChanged: _showMoreItems,
+        child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListView.separated(
-            itemCount: filteredItems.length,
+            itemCount: getFilteredItems().length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
@@ -59,17 +84,10 @@ class _StockListState extends State<StockList> {
                 const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
             itemBuilder: (context, index) {
               return MagicItemCard(
-                  key: Key(filteredItems[index].papel),
-                  data: filteredItems[index]);
+                  key: Key(getFilteredItems()[index].papel),
+                  data: getFilteredItems()[index]);
             }),
-        VisibilityDetector(
-            key: const Key('loading'),
-            onVisibilityChanged: _showMoreItems,
-            child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                ))),
+        _getLoading()
       ],
     );
   }

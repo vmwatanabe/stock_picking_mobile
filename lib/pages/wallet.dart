@@ -200,7 +200,7 @@ class _WalletState extends State<Wallet> {
                     return WalletItemCard(
                         key: Key(_list[index].name),
                         data: _list[index],
-                        onDelete: retrieveWalletItems);
+                        onEditOrDelete: retrieveWalletItems);
                   }),
             ],
           )),

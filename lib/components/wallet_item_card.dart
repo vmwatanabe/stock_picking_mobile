@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:stock_picking_mobile/classes/stock_transaction.dart';
 import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/components/description_item.dart';
+import 'package:stock_picking_mobile/components/sell_wallet_item.dart';
 import 'package:stock_picking_mobile/services/stock_transaction_db_handler.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
 
 class WalletItemCard extends StatefulWidget {
-  const WalletItemCard({Key? key, required this.data, required this.onDelete})
+  const WalletItemCard(
+      {Key? key, required this.data, required this.onEditOrDelete})
       : super(key: key);
 
   final WalletCardInfo data;
-  final Function onDelete;
+  final Function onEditOrDelete;
 
   @override
   _WalletItemCardState createState() {
@@ -30,11 +33,24 @@ class _WalletItemCardState extends State<WalletItemCard> {
 
   void handleDeletePress(BuildContext context) async {
     await handler.deleteStockTransaction(widget.data.id!);
-    widget.onDelete();
+    widget.onEditOrDelete();
+  }
+
+  void handleSubmit(StockTransaction item) {
+    handler.insertWalletItems([item]);
+    widget.onEditOrDelete();
   }
 
   void handleEditPress(BuildContext context) {
-    print(1);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => SellWalletItem(
+              data: widget.data,
+              onSubmit: (StockTransaction item) {
+                handleSubmit(item);
+                Navigator.pop(context);
+              },
+            ));
   }
 
   @override

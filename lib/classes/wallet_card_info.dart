@@ -3,13 +3,8 @@ import 'package:stock_picking_mobile/classes/wallet_item.dart';
 
 class WalletCardInfo extends WalletItem {
   const WalletCardInfo(
-      {required this.stockListItem, id, name, quantity, price, buyDate})
-      : super(
-            id: id,
-            quantity: quantity,
-            name: name,
-            price: price,
-            buyDate: buyDate);
+      {required this.stockListItem, id, name, quantity, price, date})
+      : super(id: id, quantity: quantity, name: name, price: price, date: date);
 
   final StockListItem? stockListItem;
 
@@ -44,7 +39,7 @@ class WalletCardInfo extends WalletItem {
       'price': price,
       'quantity': quantity,
       'name': name,
-      'buyDate': buyDate,
+      'date': date,
       'empresa': empresa,
       'initialTotal': initialTotal,
       'currentTotal': currentTotal,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/components/description_item.dart';
-import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
+import 'package:stock_picking_mobile/services/stock_transaction_db_handler.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
 
 class WalletItemCard extends StatefulWidget {
@@ -29,7 +29,7 @@ class _WalletItemCardState extends State<WalletItemCard> {
   }
 
   void handleDeletePress(BuildContext context) async {
-    await handler.deleteWalletItem(widget.data.id!);
+    await handler.deleteStockTransaction(widget.data.id!);
     widget.onDelete();
   }
 
@@ -94,8 +94,8 @@ class _WalletItemCardState extends State<WalletItemCard> {
                       Expanded(
                           child: DescriptionItem(
                               label: "Buy Date.",
-                              child: getFormattedDate(widget.data.buyDate) ??
-                                  "-")),
+                              child:
+                                  getFormattedDate(widget.data.date) ?? "-")),
                     ],
                   ),
                 ),

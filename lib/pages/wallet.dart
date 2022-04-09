@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stock_picking_mobile/classes/scaffold.dart';
 import 'package:stock_picking_mobile/classes/stock_list_item.dart';
+import 'package:stock_picking_mobile/classes/stock_transaction.dart';
 import 'package:stock_picking_mobile/classes/wallet_card_info.dart';
 import 'package:stock_picking_mobile/classes/wallet_item.dart';
 import 'package:stock_picking_mobile/components/add_wallet.dart';
 import 'package:stock_picking_mobile/components/wallet_composition.dart';
 import 'package:stock_picking_mobile/components/wallet_item_card.dart';
 import 'package:stock_picking_mobile/providers/magic_model.dart';
-import 'package:stock_picking_mobile/services/wallet_db_handler.dart';
+import 'package:stock_picking_mobile/services/stock_transaction_db_handler.dart';
+import 'package:stock_picking_mobile/utils/stock_transaction.dart';
 
 enum OrderedBy {
   ticker,
@@ -82,7 +84,9 @@ class _WalletState extends State<Wallet> {
   }
 
   void retrieveWalletItems() async {
-    List<WalletItem> list = await handler.retrieveWalletItems();
+    List<StockTransaction> stockTransactionList =
+        await handler.retrieveStockTransactions();
+    List<WalletItem> list = toWalletItemList(stockTransactionList);
     MagicModel magic = context.read<MagicModel>();
 
     List<StockListItem>? stockListItems = magic.data?.items;
@@ -93,7 +97,7 @@ class _WalletState extends State<Wallet> {
 
       return WalletCardInfo(
           stockListItem: magicPair,
-          buyDate: elem.buyDate,
+          date: elem.date,
           id: elem.id,
           name: elem.name,
           price: elem.price,
@@ -114,7 +118,7 @@ class _WalletState extends State<Wallet> {
     );
   }
 
-  void handleSubmit(WalletItem item) {
+  void handleSubmit(StockTransaction item) {
     handler.insertWalletItems([item]);
     retrieveWalletItems();
   }
@@ -127,7 +131,7 @@ class _WalletState extends State<Wallet> {
         showDialog(
             context: context,
             builder: (BuildContext context) => AddWallet(
-                  onSubmit: (WalletItem item) {
+                  onSubmit: (StockTransaction item) {
                     handleSubmit(item);
                     Navigator.pop(context);
                   },
@@ -194,7 +198,7 @@ class _WalletState extends State<Wallet> {
                           padding: EdgeInsets.symmetric(vertical: 10)),
                   itemBuilder: (context, index) {
                     return WalletItemCard(
-                        key: Key(_list[index].id!.toString()),
+                        key: Key(_list[index].name),
                         data: _list[index],
                         onDelete: retrieveWalletItems);
                   }),

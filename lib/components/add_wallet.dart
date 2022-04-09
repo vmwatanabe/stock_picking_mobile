@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:stock_picking_mobile/classes/wallet_item.dart';
+import 'package:stock_picking_mobile/classes/stock_transaction.dart';
 import 'package:stock_picking_mobile/utils/index.dart';
 
 class AddWallet extends StatelessWidget {
   const AddWallet({Key? key, required this.onSubmit}) : super(key: key);
 
-  final Function(WalletItem) onSubmit;
+  final Function(StockTransaction) onSubmit;
 
   void handleAddClick(Map<String, dynamic> data) {
-    onSubmit(WalletItem.fromMap(data));
+    data["type"] = StockTransactionType.buy.index;
+    onSubmit(StockTransaction.fromMap(data));
   }
 
   @override
@@ -53,7 +54,7 @@ class AddWalletFormState extends State<AddWalletForm> {
           TextFormField(
             keyboardType: TextInputType.text,
             onSaved: (String? value) {
-              formData['name'] = value;
+              formData['ticker'] = value;
             },
             decoration: const InputDecoration(
               border: UnderlineInputBorder(),
@@ -106,8 +107,7 @@ class AddWalletFormState extends State<AddWalletForm> {
             keyboardType: TextInputType.number,
             onSaved: (String? value) {
               if (value != null) {
-                formData['buyDate'] =
-                    getDateFromValue(value)?.toIso8601String();
+                formData['date'] = getDateFromValue(value)?.toIso8601String();
               }
             },
             decoration: const InputDecoration(

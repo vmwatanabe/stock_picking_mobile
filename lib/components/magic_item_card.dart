@@ -83,6 +83,21 @@ class MagicItemCard extends StatelessWidget {
             ],
           ),
         ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                  child: DescriptionItem(
+                label: "Valor intrínseco",
+                child: data.valorIntrinseco == 0
+                    ? '-'
+                    : getFormattedPrice(data.valorIntrinseco),
+              )),
+            ],
+          ),
+        ),
       ]),
     );
   }

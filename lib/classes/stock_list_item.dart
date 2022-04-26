@@ -7,11 +7,11 @@ class StockListItem {
   final int evByEbitRanking;
   final int roicRanking;
   final double cotacao;
-  final double cotacaoToTop30;
   final double pByL;
   final double pByVp;
   final double psr;
   final double dividendYield;
+  final double valorIntrinseco;
   final double pByAtivo;
   final double pByCapitalGiro;
   final double pByEbit;
@@ -66,7 +66,7 @@ class StockListItem {
     required this.roicRanking,
     required this.magicValue,
     required this.magicRanking,
-    required this.cotacaoToTop30,
+    required this.valorIntrinseco,
   });
 
   factory StockListItem.fromJson(Map<String, dynamic> json) {
@@ -103,7 +103,7 @@ class StockListItem {
       roicRanking: json['roicRanking'],
       magicValue: json['magicValue'],
       magicRanking: json['magicRanking'],
-      cotacaoToTop30: json['cotacaoToTop30'],
+      valorIntrinseco: json['valor_intrinseco'],
     );
   }
 
@@ -141,7 +141,6 @@ class StockListItem {
     map['roicRanking'] = roicRanking;
     map['magicValue'] = magicValue;
     map['magicRanking'] = magicRanking;
-    map['cotacaoToTop30'] = cotacaoToTop30;
 
     return map;
   }
@@ -177,4 +176,5 @@ const Map stockListLabelsMap = {
   "dividaBrutaByPatrimonio": "Dív.Brut/ Patrim.",
   "crescRec": "Cresc. Rec.5a",
   "smallcap": "Smallcap",
+  "valorIntrinseco": "Valor Intrínseco",
 };

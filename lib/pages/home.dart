@@ -192,6 +192,8 @@ class _HomeState extends State<Home> {
               child: Text("Failed to load data"),
             );
           } else if (snapshot.hasData) {
+            snapshot.data!.items
+                .sort((a, b) => a.magicRanking.compareTo(b.magicRanking));
             return SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: StockList(
